@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-fcxlpo6bfbo$5fq_$xbm=d&p39ht^2^ri^e)e2-a28c6=^k^p(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['skilllhive-6.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
