@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --bg-dark: #0f172a;
+    --bg-card: #111827;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-purple: #8b5cf6;
+    --glow-blue: rgba(59, 130, 246, 0.3);
+    --text-primary: #ffffff;
+    --text-secondary: #e5e7eb;
+    --text-muted: #9ca3af;
+    --border-color: #374151;
+}
+
+body {
+    background-color: #0f172a;
+    color: #e5e7eb;
+    font-family: 'Outfit', sans-serif;
+    overflow-x: hidden;
+    padding-top: 80px;
+}
+
+/* 1. Force Heading Colors */
+h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* 2. Fix Section Titles */
+.section-title {
+    color: #ffffff !important;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 3. Fix Paragraph and Normal Text */
+p, span, div, label, .form-text {
+    color: #e5e7eb !important;
+    opacity: 1 !important;
+}
+
+/* 4. Fix Labels */
+label, .form-label {
+    color: #ffffff !important;
+    font-weight: 500;
+    opacity: 1 !important;
+}
+
+/* 5. Fix Cards */
+.card, .glass-card, .skill-card, .review-card, .stats-card {
+    background: #111827 !important;
+    border: 1px solid #374151 !important;
+    color: #e5e7eb !important;
+    border-radius: 20px;
+    padding: 25px;
+    transition: all 0.3s ease;
+}
+
+/* 6. Fix Inputs */
+input, textarea, select, .form-control {
+    background: #1f2937 !important;
+    color: #ffffff !important;
+    border: 1px solid #374151 !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+}
+
+input::placeholder,
+textarea::placeholder,
+.form-control::placeholder {
+    color: #9ca3af !important;
+}
+
+input:focus, textarea:focus, .form-control:focus {
+    background-color: #263143 !important;
+    border-color: var(--accent-blue) !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important;
+    outline: none;
+}
+
+/* 7. Fix Muted and Small Text */
+.text-muted, .small, .tiny, .text-secondary {
+    color: #d1d5db !important;
+    opacity: 1 !important;
+}
+
+/* Background Glowing Shapes */
+.blob {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--glow-blue) 0%, transparent 70%);
+    filter: blur(100px);
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.4;
+    border-radius: 50%;
+}
+
+.blob-1 { top: -200px; right: -200px; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); }
+.blob-2 { bottom: 10%; left: -200px; background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%); }
+
+/* Navbar */
+.navbar {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px 0;
+    backdrop-filter: blur(0px);
+    background: transparent;
+}
+
+.navbar.scrolled {
+    background: rgba(15, 23, 42, 0.9) !important;
+    backdrop-filter: blur(20px);
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-link {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+    padding: 8px 20px !important;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--accent-blue) !important;
+}
+
+/* Utilities */
+.gradient-text {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Buttons */
+.btn-primary-glow {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    border: none;
+    color: #ffffff !important;
+    font-weight: 600;
+    padding: 12px 30px;
+    border-radius: 50px;
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-outline-glass {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: #ffffff !important;
+    padding: 10px 25px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+/* Stats */
+.stats-number {
+    color: #ffffff !important;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.stats-label {
+    color: #d1d5db !important;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    body { padding-top: 70px; }
+    .navbar { background: rgba(15, 23, 42, 0.95) !important; backdrop-filter: blur(15px); }
+}
