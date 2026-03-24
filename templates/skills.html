@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Skills - Skill Exchange Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        padding: 120px 0 60px;
+        background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.05), transparent 40%);
+        position: relative;
+    }
+
+    .category-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .skill-marketplace-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        height: 100%;
+        padding: 20px;
+    }
+
+    .skill-marketplace-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-blue);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    }
+
+    .skill-badge {
+        font-size: 0.75rem;
+        padding: 5px 12px;
+        border-radius: 50px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--border-color);
+    }
+
+    .match-card {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 24px;
+        padding: 30px;
+        position: relative;
+    }
+
+    .trending-badge {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--border-color);
+        border-radius: 50px;
+        padding: 10px 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .trending-badge:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: var(--accent-blue);
+        transform: scale(1.05);
+    }
+
+    .hero-img {
+        max-width: 100%;
+        filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.3));
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<!-- Hero Section -->
+<section class="hero-section mt-dashboard">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <h1 class="display-3 fw-bold mb-3 fade-in">Discover and <span class="gradient-text">Share Skills</span></h1>
+                <p class="lead text-secondary mb-5 fade-in" style="animation-delay: 0.2s;">
+                    Teach what you know and learn what you love from the community. Join thousands of creators and experts.
+                </p>
+                
+                <div class="search-bar-container mb-4 fade-in" style="animation-delay: 0.4s;">
+                    <div class="position-relative">
+                        <i class="fas fa-search position-absolute text-secondary" style="left: 20px; top: 50%; transform: translateY(-50%);"></i>
+                        <input type="text" class="search-input" style="padding-left: 50px;" placeholder="Search for skills (e.g. Python, UI Design)...">
+                    </div>
+                </div>
+                
+                <div class="fade-in" style="animation-delay: 0.6s;">
+                    <a href="{% url 'add_skill' %}" class="btn btn-primary-glow px-5 py-3 rounded-pill me-3">
+                        <i class="fas fa-plus-circle me-2"></i>Add Skill
+                    </a>
+                    <button class="btn btn-outline-glass px-5 py-3 rounded-pill">
+                        Explore All
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center fade-in" style="animation-delay: 0.4s;">
+                <img src="{% static 'images/skill_learning_illustration.png' %}" alt="Learning Illustration" class="hero-img">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skill Categories -->
+<section class="py-5 mt-5">
+    <div class="container">
+        <h2 class="section-title mb-5">Skill Categories</h2>
+        <div class="row g-4">
+            {% for cat in categories %}
+            <div class="col-md-3">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="{{ cat.icon }}"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">{{ cat.name }}</h5>
+                    <p class="text-secondary small mb-0">{{ cat.count }} skills available</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Skills Marketplace -->
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-5">
+            <h2 class="section-title mb-0">Skills Marketplace</h2>
+            <a href="#" class="text-accent-blue text-decoration-none">View All Marketplace <i class="fas fa-arrow-right ms-2"></i></a>
+        </div>
+        <div class="row g-4">
+            <!-- Skill Cards -->
+            {% for skill in marketplace_skills %}
+            <div class="col-md-4 col-lg-3">
+                <div class="skill-marketplace-card p-3">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="skill-badge">{{ skill.level }}</span>
+                        <div class="rating">
+                            <i class="fas fa-star rating-star"></i>
+                            <span class="small ms-1 fw-bold">{{ skill.rating }}</span>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3">{{ skill.name }}</h5>
+                    <div class="d-flex align-items-center mb-4">
+                        <img src="https://ui-avatars.com/api/?name={{ skill.user }}&background=random" class="avatar-sm me-2" alt="{{ skill.user }}">
+                        <span class="small text-secondary">by <span class="text-white">{{ skill.user }}</span></span>
+                    </div>
+                    <button class="btn btn-outline-glass w-100 btn-sm rounded-pill">Request Session</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Your Skills Section -->
+<section class="py-5 bg-black bg-opacity-25 rounded-5 my-5 mx-3">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-md-6 border-end border-secondary border-opacity-25">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold mb-0">Skills <span class="text-primary">You Offer</span></h3>
+                    <a href="{% url 'add_skill' %}" class="btn btn-sm btn-outline-glass rounded-pill px-3"><i class="fas fa-plus me-1"></i> Add</a>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="trending-badge">Python <i class="fas fa-times ms-2 small opacity-50"></i></span>
+                    <span class="trending-badge">Django <i class="fas fa-times ms-2 small opacity-50"></i></span>
+                    <span class="trending-badge">REST API <i class="fas fa-times ms-2 small opacity-50"></i></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold mb-0">Skills <span class="text-purple">You Want to Learn</span></h3>
+                    <a href="{% url 'add_skill' %}" class="btn btn-sm btn-outline-glass rounded-pill px-3"><i class="fas fa-plus me-1"></i> Add</a>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="trending-badge border-purple">UI/UX Design <i class="fas fa-times ms-2 small opacity-50"></i></span>
+                    <span class="trending-badge border-purple">Digital Marketing <i class="fas fa-times ms-2 small opacity-50"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skill Match Suggestions -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title">Perfect Matches For You</h2>
+        <div class="row g-4">
+            {% for match in matches %}
+            <div class="col-md-6">
+                <div class="match-card">
+                    <span class="match-score" data-color="{{ match.color }}">{{ match.score }}% Match</span>
+                    <div class="d-flex align-items-center mb-4">
+                        <img src="https://ui-avatars.com/api/?name={{ match.user }}&background={{ match.color }}&color=fff" class="rounded-circle me-3" style="width: 60px; height: 60px;" alt="{{ match.user }}">
+                        <div>
+                            <h5 class="fw-bold mb-0">{{ match.user }}</h5>
+                            <span class="text-secondary small">{{ match.role }}</span>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <p class="text-secondary small mb-1">They Offer</p>
+                            <span class="fw-bold text-accent-blue">{{ match.offer }}</span>
+                        </div>
+                        <div class="col-6">
+                            <p class="text-secondary small mb-1">They Want</p>
+                            <span class="fw-bold" data-color="{{ match.color }}">{{ match.want }}</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary-glow w-100 rounded-pill" {% if forloop.counter > 1 %}data-bg-color="{{ match.color }}"{% endif %}>Connect / Request Session</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Trending Skills & Gamification -->
+<div class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-8">
+                <h2 class="section-title">Trending Skills</h2>
+                <div class="d-flex flex-wrap gap-2 mb-5">
+                    {% for trend in trending_skills %}
+                    <div class="trending-badge">
+                        <i class="{{ trend.icon }} {{ trend.class }}"></i>
+                        <span>{{ trend.name }}</span>
+                        <span class="ms-2 badge bg-dark text-secondary fw-normal">{{ trend.count }} learners</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="glass-card mt-4 p-4" style="background: rgba(255,255,255,0.03);">
+                    <div class="row align-items-center">
+                        <div class="col-md-9">
+                            <h4 class="fw-bold mb-2">Skill Verification</h4>
+                            <p class="text-secondary mb-0">Verify your skills by uploading a demo or completing a test to earn trust badges.</p>
+                        </div>
+                        <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                            <button class="btn btn-primary-glow rounded-pill px-4">Upload Demo</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="glass-card mb-4">
+                    <h5 class="fw-bold mb-4">Skill Mastery Progress</h5>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small fw-bold">Python</span>
+                            <span class="small text-secondary">70%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small fw-bold">Graphic Design</span>
+                            <span class="small text-secondary">40%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-4 mt-4 text-center border border-primary border-opacity-10">
+                        <p class="small mb-0 text-white">Unlock the next level by teaching or learning more skills.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h5 class="fw-bold mb-4">Community Activity</h5>
+                    <div class="activity-item">
+                        <p class="small mb-0"><span class="text-white fw-bold">Rahul</span> taught <span class="text-accent-blue">Python</span> to <span class="text-white fw-bold">Anita</span></p>
+                        <span class="text-secondary smaller" style="font-size: 0.7rem;">2 minutes ago</span>
+                    </div>
+                    <div class="activity-item">
+                        <p class="small mb-0"><span class="text-white fw-bold">Maria</span> learned <span class="text-purple">Guitar</span> from <span class="text-white fw-bold">David</span></p>
+                        <span class="text-secondary smaller" style="font-size: 0.7rem;">15 minutes ago</span>
+                    </div>
+                    <div class="activity-item">
+                        <p class="small mb-0"><span class="text-white fw-bold">Alex</span> unlocked <span class="gradient-text fw-bold">Level 4</span></p>
+                        <span class="text-secondary smaller" style="font-size: 0.7rem;">1 hour ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="glass-card text-center py-5 px-4" style="background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), rgba(157, 80, 187, 0.1)); border-color: rgba(255,255,255,0.1);">
+            <h2 class="display-5 fw-bold mb-4">Ready to Grow Your <span class="gradient-text">Knowledge?</span></h2>
+            <p class="lead text-secondary mb-5 mx-auto" style="max-width: 600px;">Share your knowledge with the community and unlock new opportunities for yourself and others.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <button class="btn btn-primary-glow px-5 py-3 rounded-pill">Offer a Skill</button>
+                <button class="btn btn-outline-glass px-5 py-3 rounded-pill">Learn a Skill</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.querySelectorAll('[data-color]').forEach(el => {
+        el.style.color = '#' + el.getAttribute('data-color');
+    });
+    document.querySelectorAll('[data-bg-color]').forEach(el => {
+        el.style.backgroundColor = '#' + el.getAttribute('data-bg-color');
+        el.style.color = 'white';
+    });
+</script>
+{% endblock %}

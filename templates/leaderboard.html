@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Global Leaderboard 🏆{% endblock %}
+{% block extra_css %}
+<style>
+    :root {
+        --bg-color: #0f172a;
+        --card-bg: rgba(17, 24, 39, 0.7);
+        --accent-glow: #0ea5e9;
+        --accent-purple: #8b5cf6;
+        --accent-gold: #fbbf24;
+        --accent-silver: #9ca3af;
+        --accent-bronze: #b45309;
+    }
+
+    body {
+        background: radial-gradient(circle at top right, #1e1b4b 0%, var(--bg-color) 40%, #020617 100%);
+        min-height: 100vh;
+        color: #fff;
+    }
+
+    .leaderboard-container {
+        padding-top: 100px;
+        padding-bottom: 50px;
+    }
+
+    .glass-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 40px rgba(14, 165, 233, 0.2);
+    }
+
+    .glow-title {
+        font-weight: 800;
+        background: linear-gradient(to right, #38bdf8, #818cf8);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    }
+
+    /* Top 3 Cards */
+    .top3-card {
+        text-align: center;
+        padding: 2rem 1rem;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+        position: relative;
+        overflow: hidden;
+    }
+    .top3-card.gold { border-color: rgba(251, 191, 36, 0.5); box-shadow: 0 0 20px rgba(251, 191, 36, 0.2); }
+    .top3-card.silver { border-color: rgba(156, 163, 175, 0.5); box-shadow: 0 0 20px rgba(156, 163, 175, 0.2); }
+    .top3-card.bronze { border-color: rgba(180, 83, 9, 0.5); box-shadow: 0 0 20px rgba(180, 83, 9, 0.2); }
+    
+    .top3-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 1rem;
+        border: 3px solid transparent;
+    }
+    .gold .top3-avatar { border-color: var(--accent-gold); box-shadow: 0 0 15px var(--accent-gold); }
+    .silver .top3-avatar { border-color: var(--accent-silver); box-shadow: 0 0 15px var(--accent-silver); }
+    .bronze .top3-avatar { border-color: var(--accent-bronze); box-shadow: 0 0 15px var(--accent-bronze); }
+    
+    .rank-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    .gold .rank-badge { background: var(--accent-gold); color: #000; }
+    .silver .rank-badge { background: var(--accent-silver); color: #000; }
+    .bronze .rank-badge { background: var(--accent-bronze); color: #fff; }
+
+    /* Current User Section */
+    .current-user-card {
+        background: linear-gradient(145deg, rgba(14, 165, 233, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+    }
+    .progress-bar-custom {
+        background: linear-gradient(90deg, var(--accent-glow), var(--accent-purple));
+        box-shadow: 0 0 10px var(--accent-purple);
+    }
+
+    /* Tabs */
+    .nav-tabs {
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        margin-bottom: 1.5rem;
+    }
+    .nav-tabs .nav-link {
+        color: #94a3b8;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        border-bottom: 2px solid transparent;
+        background: transparent;
+    }
+    .nav-tabs .nav-link:hover {
+        color: #fff;
+        border-color: rgba(255,255,255,0.2);
+    }
+    .nav-tabs .nav-link.active {
+        color: var(--accent-glow);
+        background: transparent;
+        border-bottom: 2px solid var(--accent-glow);
+        text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+    }
+
+    /* List Items */
+    .leaderboard-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.02);
+        margin-bottom: 0.8rem;
+        border: 1px solid rgba(255,255,255,0.05);
+        transition: all 0.2s;
+    }
+    .leaderboard-item:hover {
+        background: rgba(255,255,255,0.05);
+        transform: scale(1.01);
+        border-color: rgba(14, 165, 233, 0.3);
+    }
+    .leaderboard-item.is-current {
+        background: rgba(139, 92, 246, 0.1);
+        border-color: rgba(139, 92, 246, 0.4);
+    }
+    .rank-number {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #64748b;
+        width: 40px;
+        text-align: center;
+    }
+    .leaderboard-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 1rem;
+    }
+    
+    .points-badge {
+        background: rgba(14, 165, 233, 0.2);
+        color: #38bdf8;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-weight: bold;
+        text-align: right;
+    }
+
+    /* Stats breakdown */
+    .stats-breakdown {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-top: 0.3rem;
+    }
+    .stats-breakdown span i {
+        margin-right: 0.3rem;
+    }
+
+    /* Badges */
+    .user-badges .badge {
+        font-size: 0.75rem;
+        padding: 0.4em 0.6em;
+        margin-right: 0.3rem;
+        border-radius: 4px;
+    }
+    .badge-learner { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; }
+    .badge-research { background: rgba(167, 139, 250, 0.2); color: #a78bfa; border: 1px solid #a78bfa; }
+    .badge-game { background: rgba(52, 211, 153, 0.2); color: #34d399; border: 1px solid #34d399; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container leaderboard-container">
+    <div class="text-center mb-5">
+        <h1 class="glow-title mb-2">Global Leaderboard 🏆</h1>
+        <p class="text-secondary fs-5">Compete, Learn, and Rise to the Top</p>
+    </div>
+
+    <!-- Top 3 Section -->
+    <div class="row g-4 mb-5 justify-content-center align-items-end">
+        
+        <!-- Rank 2 -->
+        {% if top_3|length >= 2 %}
+        {% with user=top_3.1 %}
+        <div class="col-md-3 order-2 order-md-1">
+            <div class="top3-card silver">
+                <div class="rank-badge">🥈</div>
+                <img src="{% if user.profile_pic_url %}{{ user.profile_pic_url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" class="top3-avatar" alt="Avatar">
+                <h4 class="mb-1">{{ user.username }}</h4>
+                <p class="text-secondary mb-2">Level {{ user.level }}</p>
+                <h5 class="text-white mb-2">{{ user.total_points }} pts</h5>
+                <div class="user-badges d-none d-md-block">
+                    <span class="badge badge-research"><i class="fas fa-microscope"></i></span>
+                </div>
+            </div>
+        </div>
+        {% endwith %}
+        {% endif %}
+
+        <!-- Rank 1 -->
+        {% if top_3|length >= 1 %}
+        {% with user=top_3.0 %}
+        <div class="col-md-4 order-1 order-md-2" style="z-index: 2;">
+            <div class="top3-card gold glass-card pb-5 pt-4">
+                <div class="rank-badge" style="width: 45px; height: 45px; font-size: 1.5rem; top: -10px;">🥇</div>
+                <img src="{% if user.profile_pic_url %}{{ user.profile_pic_url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" class="top3-avatar" style="width: 120px; height: 120px;" alt="Avatar">
+                <h3 class="mb-1 text-warning">{{ user.username }}</h3>
+                <p class="text-secondary mb-2 d-inline-flex gap-2"><span>Level {{ user.level }}</span> | <span class="text-danger"><i class="fas fa-fire"></i> 5 days</span></p>
+                <h4 class="text-white mb-3">{{ user.total_points }} pts</h4>
+                <div class="user-badges">
+                    <span class="badge badge-learner"><i class="fas fa-book-open"></i> Top Learner</span>
+                    <span class="badge badge-game"><i class="fas fa-gamepad"></i> Game Master</span>
+                </div>
+            </div>
+        </div>
+        {% endwith %}
+        {% endif %}
+
+        <!-- Rank 3 -->
+        {% if top_3|length >= 3 %}
+        {% with user=top_3.2 %}
+        <div class="col-md-3 order-3 order-md-3">
+            <div class="top3-card bronze">
+                <div class="rank-badge">🥉</div>
+                <img src="{% if user.profile_pic_url %}{{ user.profile_pic_url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" class="top3-avatar" alt="Avatar">
+                <h4 class="mb-1">{{ user.username }}</h4>
+                <p class="text-secondary mb-2">Level {{ user.level }}</p>
+                <h5 class="text-white mb-2">{{ user.total_points }} pts</h5>
+                <div class="user-badges d-none d-md-block">
+                    <span class="badge badge-game"><i class="fas fa-gamepad"></i></span>
+                </div>
+            </div>
+        </div>
+        {% endwith %}
+        {% endif %}
+    </div>
+
+    <!-- Current Logged In User Section (If present) -->
+    {% if user_data %}
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+            <div class="glass-card current-user-card p-4">
+                <div class="d-flex flex-wrap align-items-center justify-content-between">
+                    <div class="d-flex align-items-center mb-3 mb-md-0">
+                        <div class="rank-number text-white fw-bold me-3">#{{ user_data.rank }}</div>
+                        <img src="{% if user_data.profile_pic_url %}{{ user_data.profile_pic_url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" class="leaderboard-avatar" alt="Your Avatar">
+                        <div>
+                            <h5 class="mb-0">You ({{ user_data.username }})</h5>
+                            <div class="text-secondary small">Level {{ user_data.level }}</div>
+                        </div>
+                    </div>
+                    <div class="text-md-end flex-grow-1 ms-md-5">
+                        <div class="d-flex justify-content-between align-items-end mb-2">
+                            <h4 class="mb-0 text-white">{{ user_data.total_points }} Total Points</h4>
+                            <span class="text-secondary small">
+                                {% if user_data.points_needed > 0 %}
+                                    {{ user_data.points_needed }} pts to Rank #{{ user_data.rank|add:"-1" }}
+                                {% else %}
+                                    You are #1!
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="progress bg-dark" style="height: 10px;">
+                            <div class="progress-bar progress-bar-custom" role="progressbar" 
+                                style="width: {% if user_data.rank == 1 %}100{% else %}65{% endif %}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Leaderboard Tabs Section -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card">
+                <ul class="nav nav-tabs" id="leaderboardTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="overall-tab" data-bs-toggle="tab" data-bs-target="#overall" type="button" role="tab">Overall</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="game-tab" data-bs-toggle="tab" data-bs-target="#game" type="button" role="tab">🎮 Game</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="research-tab" data-bs-toggle="tab" data-bs-target="#research" type="button" role="tab">🔬 Research</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="sessions-tab" data-bs-toggle="tab" data-bs-target="#sessions" type="button" role="tab">📚 Sessions</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="leaderboardTabContent">
+                    <!-- OVERALL TAB -->
+                    <div class="tab-pane fade show active" id="overall" role="tabpanel">
+                        <div class="leaderboard-list mt-3">
+                            {% for item in overall_leaderboard %}
+                            <div class="leaderboard-item {% if item.is_current %}is-current{% endif %}">
+                                <div class="rank-number">{{ item.rank }}</div>
+                                <img src="{% if item.profile_pic_url %}{{ item.profile_pic_url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" class="leaderboard-avatar" alt="Avatar">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0">{{ item.username }} {% if item.is_current %}<span class="badge bg-primary ms-2 align-middle">You</span>{% endif %}</h6>
+                                    <div class="stats-breakdown d-none d-sm-flex">
+                                        <span title="Game XP"><i class="fas fa-gamepad text-success"></i>{{ item.game_xp }}</span>
+                                        <span title="Research Points"><i class="fas fa-microscope text-info"></i>{{ item.research_points }}</span>
+                                        <span title="Session Points"><i class="fas fa-book-open text-warning"></i>{{ item.session_points }}</span>
+                                    </div>
+                                </div>
+                                <div class="points-badge">
+                                    {{ item.total_points }} pts
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-center text-secondary py-4">No data available.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- GAME TAB -->
+                    <div class="tab-pane fade" id="game" role="tabpanel">
+                        <div class="leaderboard-list mt-3">
+                            {% for item in game_leaderboard %}
+                            <div class="leaderboard-item {% if item.is_current %}is-current{% endif %}">
+                                <div class="rank-number">{{ forloop.counter }}</div>
+                                <img src="{% if item.profile_pic_url %}{{ item.profile_pic_url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" class="leaderboard-avatar" alt="Avatar">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0">{{ item.username }}</h6>
+                                </div>
+                                <div class="points-badge" style="background: rgba(52, 211, 153, 0.2); color: #34d399;">
+                                    <i class="fas fa-gamepad me-2"></i>{{ item.game_xp }} XP
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- RESEARCH TAB -->
+                    <div class="tab-pane fade" id="research" role="tabpanel">
+                        <div class="leaderboard-list mt-3">
+                            {% for item in research_leaderboard %}
+                            <div class="leaderboard-item {% if item.is_current %}is-current{% endif %}">
+                                <div class="rank-number">{{ forloop.counter }}</div>
+                                <img src="{% if item.profile_pic_url %}{{ item.profile_pic_url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" class="leaderboard-avatar" alt="Avatar">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0">{{ item.username }}</h6>
+                                </div>
+                                <div class="points-badge" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">
+                                    <i class="fas fa-microscope me-2"></i>{{ item.research_points }} Pts
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- SESSIONS TAB -->
+                    <div class="tab-pane fade" id="sessions" role="tabpanel">
+                        <div class="leaderboard-list mt-3">
+                            {% for item in session_leaderboard %}
+                            <div class="leaderboard-item {% if item.is_current %}is-current{% endif %}">
+                                <div class="rank-number">{{ forloop.counter }}</div>
+                                <img src="{% if item.profile_pic_url %}{{ item.profile_pic_url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}" class="leaderboard-avatar" alt="Avatar">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0">{{ item.username }}</h6>
+                                </div>
+                                <div class="points-badge" style="background: rgba(251, 191, 36, 0.2); color: #fbbf24;">
+                                    <i class="fas fa-book-open me-2"></i>{{ item.session_points }} Pts
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

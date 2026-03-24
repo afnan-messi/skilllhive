@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}How It Works - Skill Exchange{% endblock %}
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-5 text-center">
+        <div class="col-12">
+            <h1 class="display-4 fw-bold mb-3">How It <span class="gradient-text">Works</span></h1>
+            <p class="lead text-secondary mx-auto" style="max-width: 600px;">
+                Learn how our decentralized knowledge-sharing platform empowers you to teach what you know and learn
+                what you want.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="glass-card text-center h-100 p-5 rounded-4 shadow-sm border border-secondary border-opacity-10">
+                <div class="icon-circle bg-primary bg-opacity-10 text-primary mb-4 mx-auto d-flex align-items-center justify-content-center rounded-circle"
+                    style="width: 80px; height: 80px;">
+                    <i class="fas fa-user-plus fa-2x"></i>
+                </div>
+                <h4 class="fw-bold mb-3">1. Create Profile</h4>
+                <p class="text-secondary">Sign up and list the skills you excel at and the ones you want to learn.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card text-center h-100 p-5 rounded-4 shadow-sm border border-secondary border-opacity-10">
+                <div class="icon-circle bg-success bg-opacity-10 text-success mb-4 mx-auto d-flex align-items-center justify-content-center rounded-circle"
+                    style="width: 80px; height: 80px;">
+                    <i class="fas fa-handshake fa-2x"></i>
+                </div>
+                <h4 class="fw-bold mb-3">2. Get Matched</h4>
+                <p class="text-secondary">Our algorithm connects you with peers offering exactly what you need.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card text-center h-100 p-5 rounded-4 shadow-sm border border-secondary border-opacity-10">
+                <div class="icon-circle bg-warning bg-opacity-10 text-warning mb-4 mx-auto d-flex align-items-center justify-content-center rounded-circle"
+                    style="width: 80px; height: 80px;">
+                    <i class="fas fa-laptop-code fa-2x"></i>
+                </div>
+                <h4 class="fw-bold mb-3">3. Start Exchanging</h4>
+                <p class="text-secondary">Connect, learn collaboratively, and earn XP by sharing your knowledge!</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

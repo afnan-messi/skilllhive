@@ -1,0 +1,463 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}About Us - Skill Exchange Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --bg-color: #0f172a;
+        --card-bg: rgba(17, 24, 39, 0.6);
+        --accent-glow: #0ea5e9;
+        --accent-purple: #8b5cf6;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: #fff;
+    }
+
+    /* Hero Section */
+    .about-hero {
+        position: relative;
+        padding: 160px 0 100px;
+        background: radial-gradient(circle at center, rgba(14, 165, 233, 0.1) 0%, rgba(15, 23, 42, 1) 60%);
+        overflow: hidden;
+    }
+    
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+        top: -200px;
+        right: -200px;
+        border-radius: 50%;
+        filter: blur(60px);
+        z-index: 0;
+    }
+
+    .about-hero::after {
+        content: '';
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+        bottom: -100px;
+        left: -200px;
+        border-radius: 50%;
+        filter: blur(50px);
+        z-index: 0;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(to right, #38bdf8, #c084fc);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+    }
+    
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.5rem; }
+    }
+
+    .hero-subtitle {
+        font-size: 1.4rem;
+        color: #94a3b8;
+        font-weight: 300;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Mission Section */
+    .mission-section {
+        padding: 100px 0;
+        position: relative;
+    }
+
+    .mission-text {
+        font-size: 2rem;
+        line-height: 1.5;
+        font-weight: 600;
+        color: #f1f5f9;
+        text-align: center;
+        max-width: 900px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .mission-text::before, .mission-text::after {
+        content: '"';
+        font-size: 4rem;
+        color: rgba(56, 189, 248, 0.2);
+        position: absolute;
+        font-family: serif;
+    }
+    
+    .mission-text::before { top: -20px; left: -30px; }
+    .mission-text::after { bottom: -40px; right: -30px; }
+    
+    @media (max-width: 768px) {
+        .mission-text { font-size: 1.5rem; padding: 0 20px; }
+        .mission-text::before { left: 0; }
+        .mission-text::after { right: 0; }
+    }
+
+    /* Features Section */
+    .features-section {
+        padding: 80px 0;
+    }
+
+    .glass-feature-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+        padding: 40px 30px;
+        height: 100%;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .glass-feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .glass-feature-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(14, 165, 233, 0.2);
+        border-color: rgba(14, 165, 233, 0.3);
+    }
+
+    .feature-icon-wrapper {
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 2;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.1);
+        transition: all 0.3s;
+    }
+
+    .glass-feature-card:hover .feature-icon-wrapper {
+        background: linear-gradient(135deg, var(--accent-glow), var(--accent-purple));
+        box-shadow: 0 10px 20px rgba(14, 165, 233, 0.4);
+        color: white !important;
+        border-color: transparent;
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .feature-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .feature-desc {
+        color: #94a3b8;
+        line-height: 1.6;
+        position: relative;
+        z-index: 2;
+        margin-bottom: 0;
+    }
+
+    /* Stats Section */
+    .stats-section {
+        padding: 100px 0;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        background: linear-gradient(180deg, rgba(15,23,42,0) 0%, rgba(14,165,233,0.03) 50%, rgba(15,23,42,0) 100%);
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 4rem;
+        font-weight: 800;
+        background: linear-gradient(to bottom, #ffffff, #94a3b8);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: #38bdf8;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    /* Vision Section */
+    .vision-section {
+        padding: 120px 0;
+        text-align: center;
+        position: relative;
+    }
+
+    .vision-bubble {
+        display: inline-block;
+        padding: 10px 20px;
+        background: rgba(139, 92, 246, 0.1);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 30px;
+        color: #c084fc;
+        font-weight: 600;
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 30px;
+    }
+
+    .vision-text {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.4;
+        max-width: 1000px;
+        margin: 0 auto;
+        background: linear-gradient(to right, #f8fafc, #94a3b8);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    @media (max-width: 768px) {
+        .vision-text { font-size: 1.8rem; }
+    }
+
+    /* CTA Section */
+    .cta-section {
+        padding: 100px 0 120px;
+        text-align: center;
+    }
+
+    .cta-card {
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        border-radius: 30px;
+        padding: 80px 40px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+    }
+
+    .cta-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .cta-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 30px;
+    }
+
+    .btn-cta {
+        background: linear-gradient(to right, var(--accent-glow), var(--accent-purple));
+        border: none;
+        color: white;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-cta:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
+        color: white;
+    }
+
+    /* Animations */
+    .fade-up {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUpAnim 0.8s forwards;
+    }
+    
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+    .delay-4 { animation-delay: 0.8s; }
+
+    @keyframes fadeUpAnim {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="about-hero text-center">
+    <div class="container hero-content">
+        <h1 class="hero-title fade-up">Redefining How People<br>Learn & Share Skills</h1>
+        <p class="hero-subtitle fade-up delay-1">
+            A platform where knowledge becomes currency. Connect, exchange ideas, and build the future together.
+        </p>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="mission-section">
+    <div class="container">
+        <div class="mission-text fade-up delay-2">
+            We believe learning should be accessible, collaborative, and rewarding. Our platform connects people to exchange skills instead of money.
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Feature 1 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="glass-feature-card fade-up delay-1">
+                    <div class="feature-icon-wrapper text-primary">
+                        <i class="fas fa-random"></i>
+                    </div>
+                    <h3 class="feature-title">Skill Exchange</h3>
+                    <p class="feature-desc">Trade your expertise for someone else's. Learn Python by teaching Graphic Design.</p>
+                </div>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="glass-feature-card fade-up delay-2">
+                    <div class="feature-icon-wrapper text-success">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3 class="feature-title">Gamified Learning</h3>
+                    <p class="feature-desc">Earn XP, unlock levels, and collect badges as you complete sessions and goals.</p>
+                </div>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="glass-feature-card fade-up delay-3">
+                    <div class="feature-icon-wrapper text-info">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <h3 class="feature-title">Research Hub</h3>
+                    <p class="feature-desc">Collaborate on academic papers, peer review projects, and climb the research charts.</p>
+                </div>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="glass-feature-card fade-up delay-4">
+                    <div class="feature-icon-wrapper text-warning">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Matching</h3>
+                    <p class="feature-desc">Our intelligent algorithm pairs you instantly with the perfect mentor or student.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row justify-content-center g-5">
+            <div class="col-md-4">
+                <div class="stat-item fade-up text-center">
+                    <div class="stat-number">10,000+</div>
+                    <div class="stat-label">Users</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item fade-up delay-1 text-center">
+                    <div class="stat-number">5,000+</div>
+                    <div class="stat-label">Skills Shared</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item fade-up delay-2 text-center">
+                    <div class="stat-number">2,000+</div>
+                    <div class="stat-label">Sessions Completed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Vision Section -->
+<section class="vision-section">
+    <div class="container">
+        <div class="vision-bubble fade-up">Our Vision</div>
+        <p class="vision-text fade-up delay-1">
+            Our vision is to build the world's largest collaborative skill-sharing ecosystem powered by community and innovation.
+        </p>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="cta-card fade-up text-center">
+                    <h2 class="cta-title">Join the Future of Learning</h2>
+                    <p class="text-secondary lead mb-5 max-w-2xl mx-auto">
+                        Stop paying for courses. Start exchanging skills today and unlock your true potential in our global ecosystem.
+                    </p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-cta">Go to Dashboard</a>
+                    {% else %}
+                        <a href="{% url 'signup' %}" class="btn btn-cta">Get Started</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

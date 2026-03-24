@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ paper.title }} - Research Hub{% endblock %}
+
+{% block content %}
+<section class="hero-section py-5" style="background: radial-gradient(circle at top right, rgba(0, 210, 255, 0.1), transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(157, 80, 187, 0.05), transparent 40%);">
+    <div class="container mt-5 pt-4">
+        <div class="row g-5">
+            <!-- Left Column: Content -->
+            <div class="col-lg-8">
+                <div class="glass-card p-5 mb-5 fade-in">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill small">
+                            {{ paper.get_category_display }}
+                        </span>
+                        <a href="{{ paper.paper_file.url }}" class="btn btn-primary-glow btn-sm px-4 rounded-pill" download>
+                            <i class="fas fa-file-download me-2"></i> Download PDF
+                        </a>
+                    </div>
+                    
+                    <h1 class="display-6 fw-bold mb-4">{{ paper.title }}</h1>
+                    
+                    <div class="d-flex align-items-center gap-4 mb-5 pb-4 border-bottom border-secondary border-opacity-10">
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="https://i.pravatar.cc/100?u={{ paper.author.username }}" class="rounded-pill border border-secondary" style="width: 50px; height: 50px;">
+                            <div>
+                                <p class="text-white mb-0 fw-bold">{{ paper.author.username }}</p>
+                                <p class="text-secondary small mb-0">Author</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3 ps-4 border-start border-secondary border-opacity-10">
+                            <div>
+                                <p class="text-white mb-0 fw-bold">{{ paper.uploaded_at|date:"M d, Y" }}</p>
+                                <p class="text-secondary small mb-0">Published At</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="fw-bold mb-3">Abstract</h4>
+                    <p class="text-secondary lead mb-5 lh-lg">{{ paper.abstract }}</p>
+                </div>
+
+                <!-- Discussion Section -->
+                <div class="glass-card p-5 fade-in">
+                    <h3 class="fw-bold mb-5"><i class="fas fa-comments me-2"></i> Discussion Thread</h3>
+                    
+                    <form method="POST" class="mb-5 pb-4 border-bottom border-secondary border-opacity-10">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            {{ discussion_form.message }}
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" name="submit_discussion" class="btn btn-outline-glass px-4 rounded-pill">Post Message</button>
+                        </div>
+                    </form>
+
+                    <div class="discussion-list">
+                        {% for comment in discussions %}
+                        <div class="d-flex gap-4 mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <img src="https://i.pravatar.cc/100?u={{ comment.user.username }}" class="rounded-circle" style="width: 45px; height: 45px;">
+                            <div>
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <h6 class="fw-bold mb-0">{{ comment.user.username }}</h6>
+                                    <span class="text-secondary smaller opacity-50">{{ comment.created_at|timesince }} ago</span>
+                                </div>
+                                <p class="text-secondary mb-0">{{ comment.message }}</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4 text-secondary opacity-50">
+                            <i class="fas fa-comment-slash fa-2x mb-3"></i>
+                            <p>No messages yet. Start the conversation!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Sidebar -->
+            <div class="col-lg-4">
+                <div class="glass-card p-5 mb-5 fade-in" id="review-section">
+                    <h3 class="fw-bold mb-4">Paper Review</h3>
+                    <div class="bg-dark bg-opacity-50 p-4 rounded-4 text-center mb-5 border border-secondary border-opacity-10">
+                        <h1 class="display-3 fw-bold text-warning mb-1">{{ avg_rating|default:"0"|floatformat:1 }}</h1>
+                        <p class="text-secondary mb-3">Average Global Rating</p>
+                        <div class="text-warning h4 mb-0">
+                            {% for i in "12345"|make_list %}
+                                <i class="fas fa-star{% if forloop.counter > paper.avg_rating|default:0 %} opacity-25{% endif %}"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold mb-4">Leave a Review</h5>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small ms-2">Your Rating</label>
+                            {{ review_form.rating }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small ms-2">Comments</label>
+                            {{ review_form.comment }}
+                        </div>
+                        <button type="submit" name="submit_review" class="btn btn-primary-glow btn-lg w-100 rounded-pill fw-bold">Submit Review</button>
+                    </form>
+                </div>
+
+                <div class="glass-card p-5 fade-in">
+                    <h4 class="fw-bold mb-4">Reviews Feed</h4>
+                    <div class="reviews-list">
+                        {% for review in reviews|slice:":5" %}
+                        <div class="mb-4 pb-4 border-bottom border-secondary border-opacity-10">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-bold small text-white">{{ review.reviewer.username }}</span>
+                                <div class="text-warning smaller">
+                                    {% for i in "12345"|make_list %}
+                                        <i class="fas fa-star{% if forloop.counter > review.rating %} opacity-25{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p class="text-secondary small mb-0">{{ review.comment }}</p>
+                        </div>
+                        {% empty %}
+                        <p class="text-center text-secondary opacity-50 py-3">No reviews yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Terms of Use - Skill Exchange{% endblock %}
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-5">
+        <div class="col-12 py-4">
+            <h1 class="display-5 fw-bold mb-4 text-center">Terms of <span class="gradient-text">Use</span></h1>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="glass-card p-5 rounded-4 shadow-sm border border-secondary border-opacity-10">
+                <i class="fas fa-gavel fa-3x text-warning mb-4 text-center d-block"></i>
+                <h3 class="fw-bold mb-3 border-bottom border-secondary border-opacity-25 pb-2">Community Guidelines</h3>
+                <p class="text-secondary lead font-italic mb-4">
+                    "Users must use the platform respectfully."
+                </p>
+                
+                <h4 class="mt-4 mb-3 text-white">1. Mutual Respect</h4>
+                <p class="text-secondary">Be courteous and constructive in sessions. Hate speech or abuse will not be tolerated.</p>
+
+                <h4 class="mt-4 mb-3 text-white">2. Account Responsibility</h4>
+                <p class="text-secondary">You are responsible for your account actions and keeping your credentials secure.</p>
+
+                <h4 class="mt-4 mb-3 text-white">3. Platform Misuse</h4>
+                <p class="text-secondary">Using our match-making or leaderboards for malicious interactions or self-spamming will cause immediate expulsion.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

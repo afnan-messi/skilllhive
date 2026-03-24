@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Research Leaderboard - Skill Exchange{% endblock %}
+
+{% block content %}
+<section class="hero-section py-5">
+    <div class="container mt-5 pt-4">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold">Research <span class="gradient-text">Leaderboard</span></h1>
+            <p class="text-secondary lead">Top academic contributors making big impact in the community.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="glass-card p-4 fade-in">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead>
+                                <tr class="border-bottom border-secondary border-opacity-25">
+                                    <th class="py-4 ps-4">Rank</th>
+                                    <th class="py-4">Contributor</th>
+                                    <th class="py-4">Papers</th>
+                                    <th class="py-4 text-end pe-4">Research Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in contributors %}
+                                <tr class="align-middle">
+                                    <td class="py-4 ps-4">
+                                        {% if forloop.counter == 1 %}
+                                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fas fa-crown me-2"></i>1st</span>
+                                        {% elif forloop.counter == 2 %}
+                                            <span class="badge bg-light text-dark px-3 py-2 rounded-pill">2nd</span>
+                                        {% elif forloop.counter == 3 %}
+                                            <span class="badge bg-rgba-primary text-secondary px-3 py-2 rounded-pill" style="background: rgba(205, 127, 50, 0.2); color: #cd7f32 !important;">3rd</span>
+                                        {% else %}
+                                            <span class="ps-2 fw-bold text-secondary">{{ forloop.counter }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <img src="https://i.pravatar.cc/100?u={{ user.username }}" class="rounded-pill" style="width: 40px; height: 40px;">
+                                            <span class="fw-bold">{{ user.username }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="text-info">{{ user.paper_count }} papers</span>
+                                    </td>
+                                    <td class="py-4 text-end pe-4">
+                                        <span class="fw-bold text-primary">{{ user.profile.points }} pts</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

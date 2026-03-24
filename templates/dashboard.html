@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Skill Exchange{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .hero-welcome {
+        padding: 120px 0 60px;
+        background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 40%),
+            radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.05), transparent 40%);
+    }
+
+    .stat-card-top {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 30px;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .stat-card-top:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-blue);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+    }
+
+    .stat-card-top i {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .progress-custom {
+        height: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+
+    .progress-bar-custom {
+        background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+        border-radius: 5px;
+    }
+
+    .gamification-large {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+        border: 1px solid var(--border-color);
+        border-radius: 30px;
+        padding: 40px;
+    }
+
+    .welcome-text {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .username {
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-welcome fade-in">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <div class="d-flex align-items-center gap-4 mb-4">
+                    <div>
+                        {% if user.is_authenticated %}
+                            <h1 class="welcome-text">Welcome back, <span class="username">{{ user.username }}</span>!</h1>
+                        {% else %}
+                            <h1 class="welcome-text">Welcome back, Guest!</h1>
+                        {% endif %}
+                        <p class="text-secondary lead mb-0">Keep sharing your knowledge and unlock new learning
+                            opportunities.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 text-lg-end">
+                <div class="glass-card d-inline-flex gap-4 p-4 rounded-4">
+                    <div class="text-center border-end border-secondary border-opacity-25 pe-4">
+                        <p class="small text-secondary mb-0">Current Level</p>
+                        <h2 class="fw-bold mb-0">Lvl {{ profile.level }}</h2>
+                    </div>
+                    <div class="text-center">
+                        <p class="small text-secondary mb-0">Total Points</p>
+                        <h2 class="fw-bold mb-0">{{ profile.points }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container pb-5">
+    <!-- Stats Row -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="stat-card-top">
+                <i class="fas fa-arrow-up text-primary"></i>
+                <h2 class="fw-bold display-6 mb-0">{{ skills_offered|length }}</h2>
+                <p class="text-secondary mb-0">Skills Offered</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card-top">
+                <i class="fas fa-book-open text-info"></i>
+                <h2 class="fw-bold display-6 mb-0">{{ skills_to_learn|length }}</h2>
+                <p class="text-secondary mb-0">Skills Wanted</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card-top">
+                <i class="fas fa-check-double text-success"></i>
+                <h2 class="fw-bold display-6 mb-0">{{ profile.sessions_completed|default:0 }}</h2>
+                <p class="text-secondary mb-0">Completed</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card-top">
+                <i class="fas fa-medal text-warning"></i>
+                <h2 class="fw-bold display-6 mb-0">Lvl {{ profile.level }}</h2>
+                <p class="text-secondary mb-0">Current Ranking</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <div class="row g-5">
+        <!-- Left Column: Progress & Matches -->
+        <div class="col-lg-8">
+            <!-- Skill Progress -->
+            <div class="glass-card mb-5">
+                <h3 class="fw-bold mb-4">Learning Progress</h3>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-semibold">Python</span>
+                        <span class="text-primary">75%</span>
+                    </div>
+                    <div class="progress progress-custom">
+                        <div class="progress-bar progress-bar-custom" style="width: 75%"></div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-semibold">Graphic Design</span>
+                        <span class="text-info">40%</span>
+                    </div>
+                    <div class="progress progress-custom">
+                        <div class="progress-bar progress-bar-custom" style="width: 40%"></div>
+                    </div>
+                </div>
+                <div class="mb-0">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-semibold">Communication Skills</span>
+                        <span class="text-success">60%</span>
+                    </div>
+                    <div class="progress progress-custom">
+                        <div class="progress-bar progress-bar-custom" style="width: 60%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="glass-card h-100">
+                        <h4 class="fw-bold mb-4">Sessions Completed</h4>
+                        <canvas id="sessionsChart" style="height: 200px;"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="glass-card h-100">
+                        <h4 class="fw-bold mb-4">Skills Exchanged</h4>
+                        <canvas id="skillsChart" style="height: 200px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommended Matches -->
+            <div class="mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold mb-0">Recommended Matches</h3>
+                    <a href="{% url 'skills_page' %}" class="btn btn-outline-glass btn-sm rounded-pill">Explore More
+                        Skills</a>
+                </div>
+                <div class="row g-4">
+                    {% for match in matches %}
+                    <div class="col-md-6 col-xl-4">
+                        <div class="match-card text-center h-100">
+                            <img src="{{ match.img }}" alt="{{ match.username }}"
+                                class="rounded-pill mb-3 border border-primary border-2"
+                                style="width: 70px; height: 70px;">
+                            <h5 class="fw-bold mb-1">{{ match.username }}</h5>
+                            <p class="text-secondary small mb-3">Teaches: {{ match.offer }}<br>Wants: {{ match.want }}
+                            </p>
+                            <button class="btn btn-outline-glass btn-sm rounded-pill w-100">Request Session</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Research Activity -->
+            <div class="glass-card mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold mb-0">Research Activity</h3>
+                    <a href="{% url 'research_hub' %}" class="btn btn-outline-glass btn-sm rounded-pill">Research
+                        Hub</a>
+                </div>
+                <div class="row g-4 text-center">
+                    <div class="col-md-4">
+                        <div class="p-4 bg-dark bg-opacity-50 rounded-4 border border-secondary border-opacity-10">
+                            <i class="fas fa-file-alt text-primary mb-2 fa-2x"></i>
+                            <h2 class="fw-bold mb-0 text-white">{{ papers_uploaded }}</h2>
+                            <p class="text-secondary small mb-0">Papers Uploaded</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 bg-dark bg-opacity-50 rounded-4 border border-secondary border-opacity-10">
+                            <i class="fas fa-star text-warning mb-2 fa-2x"></i>
+                            <h2 class="fw-bold mb-0 text-white">{{ reviews_given }}</h2>
+                            <p class="text-secondary small mb-0">Reviews Given</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 bg-dark bg-opacity-50 rounded-4 border border-secondary border-opacity-10">
+                            <i class="fas fa-award text-success mb-2 fa-2x"></i>
+                            <h2 class="fw-bold mb-0 text-white">{{ research_points }}</h2>
+                            <p class="text-secondary small mb-0">Research Points</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Sidebar Widgets -->
+        <div class="col-lg-4">
+            <!-- Gamification Section -->
+            <div class="gamification-large mb-5">
+                <div class="text-center mb-4">
+                    <div class="mb-3 d-inline-block p-3 bg-primary bg-opacity-10 rounded-circle">
+                        <i class="fas fa-rocket fa-2x text-primary pulse-animation"></i>
+                    </div>
+                    <h4 class="fw-bold">Next Level: Lvl {{ profile.level|add:"1" }}</h4>
+                    <p class="text-secondary px-3">Complete 3 more sessions to level up and earn 500 bonus points!</p>
+                </div>
+                <div class="progress progress-custom mb-4" style="height: 15px;">
+                    <div class="progress-bar progress-bar-custom" style="width: 65%"></div>
+                </div>
+                <button class="btn btn-primary-glow btn-lg w-100 rounded-pill fw-bold">Play Next Level</button>
+            </div>
+
+            <!-- Upcoming Sessions -->
+            <div class="glass-card mb-5">
+                <h4 class="fw-bold mb-4">Upcoming</h4>
+                {% for session in sessions %}
+                <div class="p-3 bg-dark bg-opacity-50 rounded-4 border border-secondary border-opacity-10 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-primary bg-opacity-10 text-primary">{{ session.skill }}</span>
+                        <span class="text-secondary small">{{ session.date }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="mb-0 fw-semibold">{{ session.teacher }}</p>
+                        <button class="btn btn-primary-glow btn-sm rounded-pill">Join</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Leaderboard Preview -->
+            <div class="glass-card mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0">Top Stars</h4>
+                    <button class="btn btn-link text-primary text-decoration-none small p-0">View All</button>
+                </div>
+                {% for person in leaderboard|slice:":5" %}
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="fw-bold text-secondary">#{{ person.rank }}</span>
+                        <img src="https://i.pravatar.cc/100?u={{ person.username }}" alt="" class="rounded-pill"
+                            style="width: 32px; height: 32px;">
+                        <span class="small">{{ person.username }}</span>
+                    </div>
+                    <span class="badge bg-dark rounded-pill">{{ person.points }} XP</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="glass-card">
+                <h4 class="fw-bold mb-4">Activity</h4>
+                <div class="activity-list">
+                    {% for item in feed %}
+                    <div class="d-flex gap-3 mb-4 feed-small">
+                        <img src="https://i.pravatar.cc/100?u={{ item.user }}" class="rounded-3"
+                            style="width: 40px; height: 40px;">
+                        <div>
+                            <p class="mb-0 fw-bold">{{ item.user }}</p>
+                            <p class="mb-0 text-secondary">{{ item.action }}</p>
+                            <span class="text-secondary opacity-50 smaller">{{ item.time }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sessions Completed Chart
+    const sessionsCtx = document.getElementById('sessionsChart').getContext('2d');
+    new Chart(sessionsCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            datasets: [{
+                label: 'Sessions',
+                data: [12, 19, 8, 15, 22],
+                backgroundColor: 'rgba(0, 210, 255, 0.4)',
+                borderColor: '#00d2ff',
+                borderWidth: 2,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a0a0a0' } },
+                x: { grid: { display: false }, ticks: { color: '#a0a0a0' } }
+            }
+        }
+    });
+
+    // Skills Exchanged Chart
+    const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+    new Chart(skillsCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Tech', 'Design', 'Soft Skills'],
+            datasets: [{
+                data: [45, 30, 25],
+                backgroundColor: ['#00d2ff', '#9d50bb', '#3aedff'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '70%',
+            plugins: { legend: { position: 'bottom', labels: { color: '#a0a0a0' } } }
+        }
+    });
+</script>
+{% endblock %}

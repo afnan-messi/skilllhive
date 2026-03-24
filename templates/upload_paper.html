@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Upload Paper - Skill Exchange{% endblock %}
+
+{% block content %}
+<section class="hero-section py-5">
+    <div class="container mt-5 pt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="glass-card p-5 fade-in">
+                    <div class="text-center mb-5">
+                        <div class="card-icon-wrapper mx-auto mb-3" style="width: 70px; height: 70px; background: var(--accent-blue); color: #000;">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <h1 class="fw-bold mb-2">Upload <span class="gradient-text">Research Paper</span></h1>
+                        <p class="text-secondary lead">Share your findings and earn 20 XP points for the community.</p>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small ms-2">Paper Title</label>
+                            {{ form.title }}
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label text-secondary small ms-2">Category</label>
+                                {{ form.category }}
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small ms-2">Abstract</label>
+                            {{ form.abstract }}
+                        </div>
+                        <div class="mb-5">
+                            <label class="form-label text-secondary small ms-2">Upload PDF Document</label>
+                            {{ form.paper_file }}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary-glow btn-lg rounded-pill fw-bold py-3">
+                                <i class="fas fa-cloud-upload-alt me-2"></i> Publish to Research Hub
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

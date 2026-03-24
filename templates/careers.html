@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Careers - Skill Exchange{% endblock %}
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row text-center mb-5">
+        <div class="col-12">
+            <h1 class="display-4 fw-bold mb-3"><span class="gradient-text">Careers</span></h1>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="glass-card p-5 rounded-4 shadow-sm border border-secondary border-opacity-10 text-center">
+                <i class="fas fa-rocket fa-3x text-info mb-4"></i>
+                <h3 class="fw-bold mb-4">Join Our Mission</h3>
+                <p class="lead text-secondary mb-5">
+                    "Join our mission to revolutionize learning."
+                </p>
+                
+                <h4 class="mb-4">Open Positions</h4>
+                <div class="row g-4 text-start">
+                    <div class="col-md-6">
+                        <div class="p-4 bg-dark rounded-3 border border-secondary border-opacity-25 h-100">
+                            <h5 class="fw-bold text-white">Senior Django Developer</h5>
+                            <p class="text-secondary small mb-3">Remote / Full Time</p>
+                            <p class="text-secondary">Help scale the backbone of the Skill Exchange platform.</p>
+                            <button class="btn btn-outline-glass btn-sm rounded-pill">Apply Now</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-4 bg-dark rounded-3 border border-secondary border-opacity-25 h-100">
+                            <h5 class="fw-bold text-white">UX/UI Designer</h5>
+                            <p class="text-secondary small mb-3">New York / Hybrid</p>
+                            <p class="text-secondary">Create stunning, gamified interfaces for our learners.</p>
+                            <button class="btn btn-outline-glass btn-sm rounded-pill">Apply Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Privacy Policy - Skill Exchange{% endblock %}
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-5">
+        <div class="col-12 py-4">
+            <h1 class="display-5 fw-bold mb-4 text-center">Privacy <span class="gradient-text">Policy</span></h1>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="glass-card p-5 rounded-4 shadow-sm border border-secondary border-opacity-10">
+                <i class="fas fa-user-shield fa-3x text-success mb-4 text-center d-block"></i>
+                <h3 class="fw-bold mb-3 border-bottom border-secondary border-opacity-25 pb-2">Your Data Security</h3>
+                <p class="text-secondary lead font-italic mb-4">
+                    "User data is securely stored and never shared without consent."
+                </p>
+                
+                <h4 class="mt-4 mb-3 text-white">1. Information We Collect</h4>
+                <p class="text-secondary">We only collect the minimum amount of information required to match you with appropriate learning and teaching sessions.</p>
+
+                <h4 class="mt-4 mb-3 text-white">2. How We Store Your Data</h4>
+                <p class="text-secondary">Your passwords and personal contact variables are heavily encrypted. All communications are over HTTPS.</p>
+
+                <h4 class="mt-4 mb-3 text-white">3. Information Sharing</h4>
+                <p class="text-secondary">We do not sell our users' database to third parties.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Skill Exchange Platform{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-dark text-white">
+
+    <!-- Modern Dark Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3 d-flex align-items-center" href="{% url 'home' %}">
+                <div class="rounded-circle bg-primary me-2 shadow-glow"
+                    style="width: 12px; height: 12px; background: var(--accent-blue) !important;"></div>
+                <span>Skill<span class="gradient-text">Exchange</span></span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item"><a class="nav-link px-3 {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a></li>
+                    
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link px-3 {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link px-3 {% if request.resolver_match.url_name == 'skills_page' %}active{% endif %}" href="{% url 'skills_page' %}">Skills</a></li>
+                        <li class="nav-item"><a class="nav-link px-3 {% if request.resolver_match.url_name == 'matches' %}active{% endif %}" href="{% url 'matches' %}">Matches</a></li>
+                        <li class="nav-item"><a class="nav-link px-3" href="{% url 'dashboard' %}">Sessions</a></li>
+                        <li class="nav-item"><a class="nav-link px-3" href="{% url 'research_hub' %}">Research Hub</a></li>
+                        <li class="nav-item"><a class="nav-link px-3 {% if request.resolver_match.url_name == 'game' %}active{% endif %}" href="{% url 'game' %}">Game</a></li>
+                        <li class="nav-item"><a class="nav-link px-3 {% if request.resolver_match.url_name == 'leaderboard' %}active{% endif %}" href="{% url 'leaderboard' %}">Leaderboard</a></li>
+                        <li class="nav-item"><a class="nav-link px-3 {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'profile' %}">Profile</a></li>
+                        <li class="nav-item ms-lg-3">
+                            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-glass btn-sm px-4 rounded-pill mt-2 mt-lg-0">Logout</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link px-3" href="#">About</a></li>
+                        <li class="nav-item ms-lg-3"><a class="btn btn-outline-glass btn-sm px-4 rounded-pill mt-2 mt-lg-0"
+                                href="{% url 'login' %}">Login</a></li>
+                        <li class="nav-item ms-lg-2"><a class="btn btn-primary-glow btn-sm px-4 rounded-pill mt-2 mt-lg-0"
+                                href="{% url 'signup' %}">Signup</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        {% if messages %}
+            <div class="container mt-4 pt-5">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 shadow-sm" style="background: rgba(var(--bs-{{ message.tags }}-rgb), 0.1); color: var(--bs-{{ message.tags }}); backdrop-filter: blur(10px);" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Dark Premium Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-4 text-white">Skill<span class="gradient-text">Exchange</span></h5>
+                    <p class="text-secondary mb-4">A decentralized knowledge-sharing ecosystem designed for the next
+                        generation of lifelong learners.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="footer-link fs-5"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="footer-link fs-5"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="footer-link fs-5"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 offset-lg-1">
+                    <h5 class="fw-bold mb-4 text-white">Platform</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'how_it_works' %}" class="footer-link">How it Works</a></li>
+                        <li class="mb-2"><a href="{% url 'skills' %}" class="footer-link">Skills</a></li>
+                        <li class="mb-2"><a href="{% url 'matching' %}" class="footer-link">Matching</a></li>
+                        <li class="mb-2"><a href="{% url 'leaderboard' %}" class="footer-link">Leaderboard</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h5 class="fw-bold mb-4 text-white">Company</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'about' %}" class="footer-link">About Us</a></li>
+                        <li class="mb-2"><a href="{% url 'privacy' %}" class="footer-link">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="{% url 'terms' %}" class="footer-link">Terms of Use</a></li>
+                        <li class="mb-2"><a href="{% url 'careers' %}" class="footer-link">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="fw-bold mb-4 text-white">Newsletter</h5>
+                    <p class="text-secondary small mb-3">Stay updated with the latest skills and matches.</p>
+                    <form action="{% url 'newsletter_subscribe' %}" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="email" name="email" required class="form-control bg-dark border-secondary text-white"
+                                placeholder="Email address" style="border-color: var(--glass-border) !important;">
+                            <button class="btn btn-primary-glow" type="submit" style="padding: 10px 20px;">Join</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <hr class="my-5" style="border-color: var(--glass-border);">
+            <div class="text-center text-secondary small">
+                <p>&copy; 2024 Skill Exchange Platform. Built with <i class="fas fa-heart text-danger"></i> for
+                    learners.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function () {
+            const nav = document.getElementById('mainNav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+
+</html>

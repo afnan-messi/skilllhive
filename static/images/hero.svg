@@ -1,0 +1,43 @@
+<svg width="600" height="500" viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Glow -->
+  <circle cx="300" cy="250" r="150" fill="url(#paint0_radial)" fill-opacity="0.2"/>
+  
+  <!-- Abstract Person 1 (Teacher) -->
+  <g id="person1">
+    <circle cx="200" cy="180" r="40" fill="#00D2FF"/>
+    <path d="M120 380C120 313.726 173.726 260 240 260H160C226.274 260 280 313.726 280 380V420H120V380Z" fill="#00D2FF" fill-opacity="0.8"/>
+    <rect x="230" y="240" width="100" height="15" rx="7.5" transform="rotate(-15 230 240)" fill="#00D2FF"/>
+  </g>
+
+  <!-- Abstract Person 2 (Learner) -->
+  <g id="person2">
+    <circle cx="400" cy="220" r="35" fill="#9D50BB"/>
+    <path d="M320 400C320 344.772 364.772 300 420 300H380C435.228 300 480 344.772 480 400V420H320V400Z" fill="#9D50BB" fill-opacity="0.8"/>
+  </g>
+
+  <!-- Connecting Lines (Exchange Idea) -->
+  <path d="M260 200C300 160 340 160 380 200" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="10 10" opacity="0.4">
+    <animate attributeName="stroke-dashoffset" from="0" to="100" dur="5s" repeatCount="indefinite" />
+  </path>
+  <path d="M380 240C340 280 300 280 260 240" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="10 10" opacity="0.4">
+    <animate attributeName="stroke-dashoffset" from="100" to="0" dur="5s" repeatCount="indefinite" />
+  </path>
+
+  <!-- Knowledge Sparkles -->
+  <circle cx="300" cy="150" r="8" fill="#3AEDFF">
+    <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="350" cy="120" r="5" fill="#FFFFFF">
+    <animate attributeName="opacity" values="0;1;0" dur="2s" begin="1s" repeatCount="indefinite" />
+  </circle>
+  <path d="M280 100L290 120H270L280 100Z" fill="#9D50BB" opacity="0.6">
+    <animateTransform attributeName="transform" type="rotate" from="0 280 110" to="360 280 110" dur="10s" repeatCount="indefinite" />
+  </path>
+
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(300 250) rotate(90) scale(150)">
+      <stop stop-color="#00D2FF"/>
+      <stop offset="1" stop-color="#00D2FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

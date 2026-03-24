@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Skill Matches - Skill Exchange{% endblock %}
+
+{% block extra_css %}
+<style>
+    .match-header {
+        padding: 100px 0 40px;
+        background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.05), transparent 40%);
+    }
+    .match-card {
+        background: var(--bg-card, #111827);
+        border: 1px solid var(--border-color, #374151);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    .match-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-blue, #3b82f6);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .match-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--border-color, #374151);
+    }
+    .badge-score {
+        background: linear-gradient(135deg, var(--accent-blue, #3b82f6), var(--accent-cyan, #06b6d4));
+        color: #fff;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+    .badge-perfect {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+    .gamification-banner {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
+        border: 1px solid var(--accent-purple, #8b5cf6);
+        border-radius: 15px;
+        padding: 15px 25px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    .filter-section {
+        background: var(--bg-card, #111827);
+        border: 1px solid var(--border-color, #374151);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="match-header">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3 text-white">Skill <span class="gradient-text">Matches</span></h1>
+        <p class="text-white opacity-75 lead mb-5">Discover people who can teach what you want to learn.</p>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="px-4 py-3 rounded-pill" style="background: rgba(31, 41, 55, 0.8); border: 1px solid var(--border-color, #374151);">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-search text-muted me-3"></i>
+                        <input type="text" id="searchInput" class="form-control bg-transparent border-0 text-white shadow-none px-0" placeholder="Search by skill...">
+                        <button class="btn btn-primary-glow rounded-pill ms-3 py-1 px-4">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container pb-5">
+    <!-- Gamification Banner -->
+    <div class="gamification-banner animate-fade-in">
+        <div class="fs-2 text-warning"><i class="fas fa-star text-warning"></i></div>
+        <div>
+            <h6 class="text-white fw-bold mb-1">XP Boost Available!</h6>
+            <p class="text-white mb-0 small opacity-75">Complete a skill exchange to earn XP and unlock new levels.</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-section d-none d-md-block">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label text-white small">Filter by Skill Category</label>
+                <select class="form-control bg-dark text-white" id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="Programming">Programming</option>
+                    <option value="Design">Design</option>
+                    <option value="Languages">Languages</option>
+                    <option value="Music">Music</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-white small">Filter by Skill Level</label>
+                <select class="form-control bg-dark text-white" id="levelFilter">
+                    <option value="">Any Level</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Expert">Expert</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-white small">Sort by Match Score</label>
+                <select class="form-control bg-dark text-white" id="sortFilter">
+                    <option value="high">Highest Match</option>
+                    <option value="low">Lowest Match</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match Cards -->
+    <div class="row g-4" id="matchContainer">
+        {% for match in matches %}
+        <div class="col-lg-4 col-md-6 match-item">
+            <div class="match-card h-100 p-4 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="{% if match.profile_pic_url %}{{ match.profile_pic_url }}{% else %}https://i.pravatar.cc/150?u={{ match.user.username }}{% endif %}" alt="Avatar" class="match-avatar">
+                        <div>
+                            <h5 class="text-white fw-bold mb-1">{{ match.user.username }}</h5>
+                            <div class="text-warning small mb-0">
+                                <i class="fas fa-star"></i> {{ match.rating }} Rating
+                            </div>
+                        </div>
+                    </div>
+                    {% if match.perfect_match %}
+                        <span class="badge-perfect"><i class="fas fa-check-circle me-1"></i> Perfect Skill Exchange</span>
+                    {% else %}
+                        <span class="badge-score">{{ match.score }}% Match</span>
+                    {% endif %}
+                </div>
+                
+                <div class="flex-grow-1">
+                    <div class="mb-3">
+                        <h6 class="text-white small fw-bold text-uppercase mb-2"><i class="fas fa-chalkboard-teacher text-info me-2"></i> They Can Teach</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for skill in match.teach_skills %}
+                                <span class="badge bg-dark border border-secondary text-white">{{ skill.skill_name }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="text-white small fw-bold text-uppercase mb-2"><i class="fas fa-graduation-cap text-warning me-2"></i> They Want to Learn</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for skill in match.learn_skills %}
+                                <span class="badge bg-dark border border-secondary text-white">{{ skill.skill_name }}</span>
+                            {% empty %}
+                                <span class="text-white opacity-50 small">Nothing specified</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 mt-auto pt-3 border-top border-secondary">
+                    <a href="#" class="btn btn-outline-glass flex-grow-1 py-2" style="font-size: 0.9rem;">View Profile</a>
+                    <button class="btn btn-primary-glow flex-grow-1 py-2" style="font-size: 0.9rem;">Request Session</button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 mb-3 text-center">
+            <div class="badge bg-dark border border-info text-info py-2 px-3 rounded-pill" style="font-size: 0.9rem;">
+                <i class="fas fa-info-circle me-1"></i> Demo Matches – Example users shown for demonstration.
+            </div>
+        </div>
+        
+        <!-- Demo Match 1 -->
+        <div class="col-lg-4 col-md-6 match-item">
+            <div class="match-card h-100 p-4 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=0D8ABC&color=fff" alt="Avatar" class="match-avatar">
+                        <div>
+                            <h5 class="text-white fw-bold mb-1">Alex Johnson</h5>
+                            <div class="text-warning small mb-0">
+                                <i class="fas fa-star"></i> 4.9 Rating
+                            </div>
+                        </div>
+                    </div>
+                    <span class="badge-score">92% Match</span>
+                </div>
+                
+                <div class="flex-grow-1">
+                    <div class="mb-3">
+                        <h6 class="text-white small fw-bold text-uppercase mb-2"><i class="fas fa-chalkboard-teacher text-info me-2"></i> They Can Teach</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-dark border border-secondary text-white">UI/UX Design</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="text-white small fw-bold text-uppercase mb-2"><i class="fas fa-graduation-cap text-warning me-2"></i> They Want to Learn</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-dark border border-secondary text-white">Python Programming</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 mt-auto pt-3 border-top border-secondary">
+                    <a href="#" class="btn btn-outline-glass flex-grow-1 py-2 disabled" style="font-size: 0.9rem;">View Profile</a>
+                    <button class="btn btn-primary-glow flex-grow-1 py-2 disabled" style="font-size: 0.9rem;">Request Session</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo Match 2 -->
+        <div class="col-lg-4 col-md-6 match-item">
+            <div class="match-card h-100 p-4 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="https://ui-avatars.com/api/?name=Maria+Lopez&background=8B5CF6&color=fff" alt="Avatar" class="match-avatar">
+                        <div>
+                            <h5 class="text-white fw-bold mb-1">Maria Lopez</h5>
+                            <div class="text-warning small mb-0">
+                                <i class="fas fa-star"></i> 4.7 Rating
+                            </div>
+                        </div>
+                    </div>
+                    <span class="badge-score">87% Match</span>
+                </div>
+                
+                <div class="flex-grow-1">
+                    <div class="mb-3">
+                        <h6 class="text-white small fw-bold text-uppercase mb-2"><i class="fas fa-chalkboard-teacher text-info me-2"></i> They Can Teach</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-dark border border-secondary text-white">Photography</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="text-white small fw-bold text-uppercase mb-2"><i class="fas fa-graduation-cap text-warning me-2"></i> They Want to Learn</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-dark border border-secondary text-white">Guitar</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 mt-auto pt-3 border-top border-secondary">
+                    <a href="#" class="btn btn-outline-glass flex-grow-1 py-2 disabled" style="font-size: 0.9rem;">View Profile</a>
+                    <button class="btn btn-primary-glow flex-grow-1 py-2 disabled" style="font-size: 0.9rem;">Request Session</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo Match 3 -->
+        <div class="col-lg-4 col-md-6 match-item">
+            <div class="match-card h-100 p-4 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="https://ui-avatars.com/api/?name=David+Chen&background=10B981&color=fff" alt="Avatar" class="match-avatar">
+                        <div>
+                            <h5 class="text-white fw-bold mb-1">David Chen</h5>
+                            <div class="text-warning small mb-0">
+                                <i class="fas fa-star"></i> 4.5 Rating
+                            </div>
+                        </div>
+                    </div>
+                    <span class="badge-score">90% Match</span>
+                </div>
+                
+                <div class="flex-grow-1">
+                    <div class="mb-3">
+                        <h6 class="text-white small fw-bold text-uppercase mb-2"><i class="fas fa-chalkboard-teacher text-info me-2"></i> They Can Teach</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-dark border border-secondary text-white">Digital Marketing</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="text-white small fw-bold text-uppercase mb-2"><i class="fas fa-graduation-cap text-warning me-2"></i> They Want to Learn</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-dark border border-secondary text-white">Graphic Design</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 mt-auto pt-3 border-top border-secondary">
+                    <a href="#" class="btn btn-outline-glass flex-grow-1 py-2 disabled" style="font-size: 0.9rem;">View Profile</a>
+                    <button class="btn btn-primary-glow flex-grow-1 py-2 disabled" style="font-size: 0.9rem;">Request Session</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const text = e.target.value.toLowerCase();
+        document.querySelectorAll('.match-item').forEach(item => {
+            if (item.innerText.toLowerCase().includes(text)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

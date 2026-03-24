@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ profile.user.username }}'s Profile - Skill Exchange{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-banner {
+        height: 250px;
+        background: linear-gradient(135deg, #1e293b 0%, var(--bg-dark) 100%);
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        border-radius: 0 0 30px 30px;
+    }
+
+    .profile-header-card {
+        margin-top: -100px;
+        background: rgba(17, 24, 39, 0.8);
+        backdrop-filter: blur(15px);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .avatar-wrapper {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin-top: -75px;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 5px solid var(--bg-card);
+        object-fit: cover;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .badge-premium {
+        background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+        padding: 0.5rem 1rem;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .progress-premium {
+        height: 8px;
+        background-color: rgba(255,255,255,0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar-premium {
+        background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 2rem;
+        padding-bottom: 2rem;
+        border-left: 2px solid var(--border-color);
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -7px;
+        top: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--accent-blue);
+        box-shadow: 0 0 10px var(--accent-blue);
+    }
+
+    .rating-stars {
+        color: #fbbf24;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0" style="margin-top: 70px;">
+    <!-- Profile Banner -->
+    <div class="profile-banner" data-bg-image="{% if profile.banner_image %}{{ profile.banner_image.url }}{% else %}https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2072&auto=format&fit=crop{% endif %}"></div>
+
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header-card">
+            <div class="row align-items-end">
+                <div class="col-lg-auto text-center text-lg-start">
+                    <div class="avatar-wrapper mx-auto">
+                        <img src="{% if profile.profile_picture %}{{ profile.profile_picture.url }}{% else %}https://i.pravatar.cc/150?u={{ profile.user.username }}{% endif %}" alt="{{ profile.user.username }}" class="profile-avatar">
+                    </div>
+                </div>
+                <div class="col-lg text-center text-lg-start mb-4">
+                    <h1 class="fw-bold mb-1">{{ profile.user.get_full_name|default:profile.user.username }}</h1>
+                    <p class="text-muted mb-3">@{{ profile.user.username }}</p>
+                    <p class="mb-3 lead">{{ profile.bio|default:"No bio yet. Tell the world about yourself!" }}</p>
+                    <div class="d-flex flex-wrap justify-content-center justify-content-lg-start gap-3">
+                        <span class="text-muted small"><i class="fas fa-calendar-alt me-1"></i> Joined {{ profile.user.date_joined|date:"M Y" }}</span>
+                        {% if profile.location %}
+                        <span class="text-muted small"><i class="fas fa-map-marker-alt me-1"></i> {{ profile.location }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-auto text-center text-lg-end mb-4">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-outline-glass rounded-pill px-4 mb-2"><i class="fas fa-edit me-2"></i>Edit Profile</a>
+                    <a href="{% url 'add_skill' %}" class="btn btn-primary-glow rounded-pill px-4 mb-2"><i class="fas fa-plus me-2"></i>Add Skill</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row mt-5 g-4">
+            <div class="col-md-3">
+                <div class="glass-card text-center">
+                    <div class="fs-4 mb-1 text-primary"><i class="fas fa-rocket"></i></div>
+                    <div class="stats-number">{{ total_skills }}</div>
+                    <div class="stats-label text-uppercase small fw-bold">Skills Total</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card text-center">
+                    <div class="fs-4 mb-1 text-success"><i class="fas fa-check-circle"></i></div>
+                    <div class="stats-number">{{ profile.sessions_completed }}</div>
+                    <div class="stats-label text-uppercase small fw-bold">Sessions Done</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card text-center">
+                    <div class="fs-4 mb-1 text-warning"><i class="fas fa-comment-dots"></i></div>
+                    <div class="stats-number">{{ reviews.count }}</div>
+                    <div class="stats-label text-uppercase small fw-bold">Reviews</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card text-center">
+                    <div class="fs-4 mb-1 text-info"><i class="fas fa-star"></i></div>
+                    <div class="stats-number">{{ avg_rating }}</div>
+                    <div class="stats-label text-uppercase small fw-bold">Avg Rating</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5 g-5">
+            <!-- Left Column: Skills and Activity -->
+            <div class="col-lg-8">
+                <!-- Skills I Can Teach -->
+                <section class="mb-5">
+                    <h4 class="section-title"><i class="fas fa-chalkboard-teacher"></i> Skills I Can Teach</h4>
+                    <div class="row g-3">
+                        {% for skill in teach_skills %}
+                        <div class="col-md-6">
+                            <div class="skill-card">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="fw-bold mb-0">{{ skill.skill_name }}</h5>
+                                    <span class="badge bg-primary rounded-pill">{{ skill.level }}</span>
+                                </div>
+                                <div class="text-muted small mb-2">{{ skill.category }}</div>
+                                <p class="mb-0 small">{{ skill.description|truncatewords:20 }}</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <div class="p-4 text-center rounded-4" style="background: rgba(255,255,255,0.05); border: 1px dashed var(--border-color);">
+                                <p class="text-white mb-0">No teaching skills added yet.</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Skills I Want to Learn -->
+                <section class="mb-5">
+                    <h4 class="section-title"><i class="fas fa-graduation-cap"></i> Skills I Want to Learn</h4>
+                    <div class="row g-3">
+                        {% for skill in learn_skills %}
+                        <div class="col-md-6">
+                            <div class="skill-card">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="fw-bold mb-0">{{ skill.skill_name }}</h5>
+                                    <span class="badge bg-secondary rounded-pill">{{ skill.level }}</span>
+                                </div>
+                                <div class="text-muted small mb-2">{{ skill.category }}</div>
+                                <p class="mb-0 small">{{ skill.description|truncatewords:20 }}</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <div class="p-4 text-center rounded-4" style="background: rgba(255,255,255,0.05); border: 1px dashed var(--border-color);">
+                                <p class="text-white mb-0">No learning skills added yet.</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Recent Activity Timeline -->
+                <section class="mb-5">
+                    <h4 class="section-title"><i class="fas fa-stream"></i> Recent Activity</h4>
+                    <div class="ms-2">
+                        {% for activity in activities %}
+                        <div class="timeline-item">
+                            <p class="mb-0 text-white fw-bold">{{ activity.action }}</p>
+                            <span class="text-white small opacity-75">{{ activity.timestamp|timesince }} ago</span>
+                        </div>
+                        {% empty %}
+                        <p class="text-white fw-bold">No recent activity found.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Reviews -->
+                <section class="mb-5">
+                    <h4 class="section-title"><i class="fas fa-quote-left"></i> Reviews</h4>
+                    <div class="row g-4">
+                        {% for review in reviews %}
+                        <div class="col-12">
+                            <div class="review-card">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h5 class="fw-bold mb-0">{{ review.reviewer.username }}</h5>
+                                    <div class="rating-stars">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="mb-0 text-white">"{{ review.comment }}"</p>
+                                <div class="mt-2 text-white small opacity-75">
+                                    {{ review.created_at|date:"M d, Y" }}
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12 mt-2">
+                            <p class="text-white fw-bold">No reviews yet.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Gamification -->
+            <div class="col-lg-4">
+                <div class="sticky-top" style="top: 100px; z-index: 100;">
+                    <div class="stats-card mb-4">
+                        <h4 class="section-title mb-4"><i class="fas fa-trophy"></i> Gamification</h4>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <div class="text-center rounded-circle p-3" style="background: rgba(59, 130, 246, 0.1); width: 60px; height: 60px;">
+                                    <span class="h4 fw-bold text-primary mb-0">{{ profile.level }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Level {{ profile.level }}</h6>
+                                <p class="text-muted tiny mb-0">{{ profile.points }} Total XP</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="small text-muted">Next Level Progress</span>
+                                <span class="small text-muted">{{ xp_progress }} / {{ next_level_xp }} XP</span>
+                            </div>
+                            <div class="progress progress-premium">
+                                <div class="progress-bar progress-bar-premium" role="progressbar" data-width="{{ xp_progress|default:0 }}"></div>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold mb-3 small text-uppercase tracking-wider">Unlocked Badges</h6>
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="text-center">
+                                <div class="p-2 rounded-circle bg-card border border-secondary mb-1 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-user-tie text-info"></i>
+                                </div>
+                                <span class="tiny d-block text-muted">Mentor</span>
+                            </div>
+                            <div class="text-center">
+                                <div class="p-2 rounded-circle bg-card border border-secondary mb-1 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-bolt text-warning"></i>
+                                </div>
+                                <span class="tiny d-block text-muted">Fast Learner</span>
+                            </div>
+                            <div class="text-center">
+                                <div class="p-2 rounded-circle bg-card border border-secondary mb-1 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-fire text-danger"></i>
+                                </div>
+                                <span class="tiny d-block text-muted">Streak</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements summary or something else could go here -->
+                    <div class="p-4 rounded-4" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); border: 1px solid var(--border-color);">
+                        <h6 class="fw-bold mb-2">Skill Goal</h6>
+                        <p class="small text-white mb-3">You're 2 sessions away from becoming a "Python Expert"!</p>
+                        <div class="progress progress-premium" style="height: 6px;">
+                            <div class="progress-bar bg-info" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Extra spacing at bottom -->
+<div style="height: 100px;"></div>
+<script>
+    document.querySelectorAll('[data-width]').forEach(el => {
+        el.style.width = el.getAttribute('data-width') + '%';
+    });
+    document.querySelectorAll('[data-bg-image]').forEach(el => {
+        el.style.backgroundImage = "url('" + el.getAttribute('data-bg-image') + "')";
+    });
+</script>
+{% endblock %}
